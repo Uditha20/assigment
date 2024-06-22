@@ -4,9 +4,10 @@ import { useLocation } from "react-router-dom";
 import Swal from "sweetalert2";
 import { useUser } from "../context/UserContext";
 import { CartContext } from "../context/CartContext";
-import { jsPDF } from "jspdf"
+import { jsPDF } from "jspdf";
 import { useNavigate } from "react-router-dom";
-// import { useUser } from "../context/UserContext";
+import Header from "../Components/Header";
+import { loadStripe } from "@stripe/stripe-js";
 function Payment() {
   const [message, setMessage] = useState("");
   const [errMsg, setErrMsg] = useState("");
@@ -16,12 +17,8 @@ function Payment() {
   const [town, setTown] = useState("");
   const [phoneNo, setPhoneNo] = useState("");
   const [email, setEmail] = useState("");
-  const [cardNumber, setCardNumber] = useState("");
-  const [expiryMonth, setExpiryMonth] = useState("");
-  const [expiryYear, setExpiryYear] = useState("");
-  const [cvv, setCvv] = useState("");
-  // const { user } = useUser();
-  const { total } = useContext(CartContext);
+  const { user } = useUser();
+  const { cart, total } = useContext(CartContext);
 
   const location = useLocation();
   const queryParams = new URLSearchParams(location.search);
@@ -73,24 +70,28 @@ function Payment() {
     return doc;
   }
 
-  // useEffect(() => {
-  //   const fetchData = async () => {
-  //     try {
-  //       const response = await axios.get(`/package/onegetpack/${packageId}`);
-  //       setPackageData(response.data);
-  //     } catch (error) {
-  //       console.error('Error fetching package data:', error);
-  //     }
-  //   };
-
-  //   if (packageId) {
-  //     fetchData();
-  //   }
-  // }, [packageId]);
-
   const handleSubmit = async (e) => {
     e.preventDefault();
-
+    const billDetails = [
+      {
+        name,
+        address,
+        apartment,
+        town,
+        phoneNo,
+        email,
+      },
+    ];
+    const orderData = {
+      user: user._id,
+      items: cart.map((item) => ({
+        product: item._id, // Assuming 'id' is the product ID
+        quantity: item.quantity,
+        subtotal: item.subtotal,
+      })),
+      billDetails,
+      total,
+    };
     const confirmResult = await Swal.fire({
       title: "Confirm Payment",
       text: "Are you sure you want to proceed with the payment?",
@@ -102,48 +103,29 @@ function Payment() {
     if (confirmResult.isConfirmed) {
       try {
         const response = await axios.post(
-          "http://localhost:5000/sales/addpayment",
-          {
-            name,
-            address,
-            apartment,
-            town,
-            phoneNo,
-            email,
-            cardNumber,
-            expiryMonth,
-            expiryYear,
-            cvv,
-            total,
-          }
+          "http://localhost:5000/sales/addOrder",
+          orderData
         );
 
         if (response.data && response.data.message) {
-          setName("");
-          setAddress("");
-          setApartment("");
-          setTown("");
-          setPhoneNo("");
-          setEmail("");
-          setCardNumber("");
-          setExpiryMonth("");
-          setExpiryYear("");
-          setCvv("");
-          setMessage(response.data.message);
-          Swal.fire({
-            title: "Payment Added",
-            text: response.data.message,
-            icon: "success",
-            confirmButtonText: "OK",
-          }).then((result) => {
-            if (result.isConfirmed) {
-              const doc = generateReceipt(response.data.newPayment);
-              doc.save("receipt.pdf");
-              navigate("/");
-            } else {
-              navigate("/");
+          const stripe = await loadStripe(
+            "pk_test_51Oy64VSC015njDot40bpYm2BS5VjpwPJb0WWw1G9Pa1dDRqK5ujoZgHal0vgITI2LWKOC4kLPuyXiIRJOeshzxkT00ZG1XgdQL"
+          );
+
+          const response = await axios.post(
+            "http://localhost:5000/sales/payment",
+            {
+              total: orderData.total,
             }
+          );
+
+          const session = response.data;
+
+          stripe.redirectToCheckout({
+            sessionId: session.id,
           });
+
+          localStorage.removeItem("cart");
         } else {
           Swal.fire({
             title: "Error",
@@ -167,120 +149,122 @@ function Payment() {
   };
 
   return (
-    <div className="container">
-      <div className=" row d-flex pt-5 ">
-        <div className=" d-flex justify-content-between  ">
-          <div className="d-flex">
-            <h6 style={{ opacity: "50%" }}>PAYMENT</h6>
-          </div>
-        </div>
-      </div>
-
-      <div className="row pt-5">
-        <div className="col-lg-6 col-md-12">
-          <h2>Billing Details</h2>
-          {message ? (
-            <p className="alert alert-success">{message}</p>
-          ) : errMsg ? (
-            <p className="alert alert-danger">{errMsg}</p>
-          ) : null}
-          <div className="pt-3 pb-3">
-            <div className="checkout-input">
-              <h5 style={{ opacity: "50%" }}>
-                Name<span style={{ color: "red" }}>*</span>
-              </h5>
-              <input
-                type="first"
-                class="form-control"
-                id="inputFirst"
-                value={name}
-                onChange={(e) => setName(e.target.value)}
-                style={{ width: "470px", height: "50px" }}
-              />
-            </div>
-
-            <div className="checkout-input">
-              <h5 style={{ opacity: "50%" }}>
-                Street Address<span style={{ color: "red" }}>*</span>
-              </h5>
-              <input
-                type="Street"
-                class="form-control"
-                value={address}
-                onChange={(e) => setAddress(e.target.value)}
-                id="inputStreet"
-                style={{ width: "470px", height: "50px" }}
-              />
-            </div>
-            <div className="checkout-input">
-              <h5 style={{ opacity: "50%" }}>
-                Apartment, floor, etc. (optional)
-              </h5>
-              <input
-                type="Apartment"
-                class="form-control"
-                value={apartment}
-                onChange={(e) => setApartment(e.target.value)}
-                id="inputApartment"
-                style={{ width: "470px", height: "50px" }}
-              />
-            </div>
-            <div className="checkout-input">
-              <h5 style={{ opacity: "50%" }}>
-                Town/City<span style={{ color: "red" }}>*</span>
-              </h5>
-              <input
-                type="Town"
-                class="form-control"
-                id="inputTown"
-                value={town}
-                onChange={(e) => setTown(e.target.value)}
-                style={{ width: "470px", height: "50px" }}
-              />
-            </div>
-            <div className="checkout-input">
-              <h5 style={{ opacity: "50%" }}>
-                Phone Number<span style={{ color: "red" }}>*</span>
-              </h5>
-              <input
-                type="Phone"
-                class="form-control"
-                id="inputPhone"
-                value={phoneNo}
-                onChange={(e) => setPhoneNo(e.target.value)}
-                style={{ width: "470px", height: "50px" }}
-              />
-            </div>
-            <div className="checkout-input">
-              <h5 style={{ opacity: "50%" }}>
-                Email Address<span style={{ color: "red" }}>*</span>
-              </h5>
-              <input
-                type="Email"
-                value={email}
-                onChange={(e) => setEmail(e.target.value)}
-                class="form-control"
-                id="inputEmail"
-                style={{ width: "470px", height: "50px" }}
-              />
+    <>
+      <Header />
+      <div className="container">
+        <div className=" row d-flex pt-5 ">
+          <div className=" d-flex justify-content-between  ">
+            <div className="d-flex">
+              <h6 style={{ opacity: "50%" }}>PAYMENT</h6>
             </div>
           </div>
         </div>
 
-        <div className="col-lg-6 col-md-12 padding-style">
-          <div>
-            <div className="process-box-row">
-              <h3>Total: $ {total}</h3>
-            </div>
-            <hr />
+        <div className="row pt-5">
+          <div className="col-lg-6 col-md-12">
+            <h2>Billing Details</h2>
+            {message ? (
+              <p className="alert alert-success">{message}</p>
+            ) : errMsg ? (
+              <p className="alert alert-danger">{errMsg}</p>
+            ) : null}
+            <div className="pt-3 pb-3">
+              <div className="checkout-input">
+                <h5 style={{ opacity: "50%" }}>
+                  Name<span style={{ color: "red" }}>*</span>
+                </h5>
+                <input
+                  type="first"
+                  class="form-control"
+                  id="inputFirst"
+                  value={name}
+                  onChange={(e) => setName(e.target.value)}
+                  style={{ width: "470px", height: "50px" }}
+                />
+              </div>
 
+              <div className="checkout-input">
+                <h5 style={{ opacity: "50%" }}>
+                  Street Address<span style={{ color: "red" }}>*</span>
+                </h5>
+                <input
+                  type="Street"
+                  class="form-control"
+                  value={address}
+                  onChange={(e) => setAddress(e.target.value)}
+                  id="inputStreet"
+                  style={{ width: "470px", height: "50px" }}
+                />
+              </div>
+              <div className="checkout-input">
+                <h5 style={{ opacity: "50%" }}>
+                  Apartment, floor, etc. (optional)
+                </h5>
+                <input
+                  type="Apartment"
+                  class="form-control"
+                  value={apartment}
+                  onChange={(e) => setApartment(e.target.value)}
+                  id="inputApartment"
+                  style={{ width: "470px", height: "50px" }}
+                />
+              </div>
+              <div className="checkout-input">
+                <h5 style={{ opacity: "50%" }}>
+                  Town/City<span style={{ color: "red" }}>*</span>
+                </h5>
+                <input
+                  type="Town"
+                  class="form-control"
+                  id="inputTown"
+                  value={town}
+                  onChange={(e) => setTown(e.target.value)}
+                  style={{ width: "470px", height: "50px" }}
+                />
+              </div>
+              <div className="checkout-input">
+                <h5 style={{ opacity: "50%" }}>
+                  Phone Number<span style={{ color: "red" }}>*</span>
+                </h5>
+                <input
+                  type="Phone"
+                  class="form-control"
+                  id="inputPhone"
+                  value={phoneNo}
+                  onChange={(e) => setPhoneNo(e.target.value)}
+                  style={{ width: "470px", height: "50px" }}
+                />
+              </div>
+              <div className="checkout-input">
+                <h5 style={{ opacity: "50%" }}>
+                  Email Address<span style={{ color: "red" }}>*</span>
+                </h5>
+                <input
+                  type="Email"
+                  value={email}
+                  onChange={(e) => setEmail(e.target.value)}
+                  class="form-control"
+                  id="inputEmail"
+                  style={{ width: "470px", height: "50px" }}
+                />
+              </div>
+            </div>
+          </div>
+
+          <div className="col-lg-6 col-md-12 padding-style">
+            <div>
+              <div className="process-box-row">
+                <h3>Total: $ {total}</h3>
+              </div>
+              <hr />
+              {/* 
             <div class="form-check pt-3">
               <label class="form-check-label" for="flexRadioDefault2">
                 <h5>Bank</h5>
               </label>
-            </div>
-            <div></div>
-            <div>
+            </div> */}
+              <div></div>
+              {/* <div>
               <h2 class="mt-4">Payment Details</h2>
               <form>
                 <div class="form-group">
@@ -336,21 +320,22 @@ function Payment() {
                   />
                 </div>
               </form>
-            </div>
+            </div> */}
 
-            <div>
-              <button
-                type="submit"
-                className="btn btn-primary"
-                onClick={handleSubmit}
-              >
-                Place Order
-              </button>
+              <div>
+                <button
+                  type="submit"
+                  className="btn btn-primary"
+                  onClick={handleSubmit}
+                >
+                  Place Order
+                </button>
+              </div>
             </div>
           </div>
         </div>
       </div>
-    </div>
+    </>
   );
 }
 

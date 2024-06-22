@@ -3,69 +3,136 @@ import React, { useEffect, useState } from "react";
 import { useParams } from "react-router-dom";
 import DashboardCard from "../Components/DashboardCard";
 import { Link } from "react-router-dom";
-function Product() {
+function Product({ existProduct, clearEditing }) {
   const [message, setMessage] = useState("");
   const [errMsg, setErrMsg] = useState("");
-  const [productData, setProductData] = useState({
-    productName: "",
-    price: "",
-    color: "",
-    quantity: "",
-    image: null,
-  });
-  const handleInputChange = (e) => {
-    const { name, value } = e.target;
-    setProductData((prevData) => ({
-      ...prevData,
-      [name]: value,
-    }));
+  const initialProductName = existProduct ? existProduct.productName : "";
+  const initialPrice = existProduct ? existProduct.price : "";
+  const initialCount = existProduct ? existProduct.item_count : 0;
+  const initialColor = existProduct ? existProduct.color : "";
+  const initialSize = existProduct ? existProduct.size : "";
+  const initialDescription = existProduct ? existProduct.description : "";
+  const initialCategory =existProduct ? existProduct.category : "";
+  
+ 
+  const initialMainImage = existProduct ? existProduct.mainImage : null;
+  const initialAdditionalImages = existProduct
+    ? existProduct.additionalImages
+    : [];
+
+
+  const [productName, setProductName] = useState(initialProductName);
+  const [price, setPrice] = useState(initialPrice);
+  const [count, setCount] = useState(initialCount);
+  const [color, setColor] = useState(initialColor);
+  const [size, SetSize] = useState(initialSize);
+  const [description, setDescription] = useState(initialDescription);
+  
+  const [Category, setCategory] = useState(
+    initialCategory
+  );
+  const [mainImage, setMainImage] = useState(initialMainImage);
+  const [additionalImages, setAdditionalImages] = useState(
+    initialAdditionalImages
+  );
+
+  const handleMainImageChange = (event) => {
+    setMainImage(event.target.files[0]);
   };
 
-  const handleFileChange = (e) => {
-    const file = e.target.files[0];
-    setProductData((prevData) => ({
-      ...prevData,
-      image: file,
-    }));
+  const handleAdditionalImagesChange = (event) => {
+    setAdditionalImages([...event.target.files]);
   };
-  const productAdd = async (e) => {
+
+  const addProduct = async (e) => {
     e.preventDefault();
-
-    const { productName, price, color, quantity, image } = productData;
-
     const formData = new FormData();
     formData.append("productName", productName);
     formData.append("price", price);
+    formData.append("item_count", count);
     formData.append("color", color);
-    formData.append("quantity", quantity);
-    if (image) {
-      formData.append("image", image);
+    formData.append("size", size);
+    formData.append("categoryName", Category);
+    formData.append("description", description);
+    if (mainImage) {
+      formData.append("mainImage", mainImage);
     }
-
+    additionalImages.forEach((image) => {
+      formData.append("additionalImages", image);
+    });
+    // console.log(formData)
+    for (let pair of formData.entries()) {
+      console.log(`${pair[0]}: ${pair[1]}`);
+    }
     try {
-      const response = await axios.post(
-        "http://localhost:5000/product/addproduct",
-        formData,
-        {
-          headers: {
-            "Content-Type": "multipart/form-data",
-          },
-        }
-      );
-      if (response.data.message) {
-        setProductData({
-          productName: "",
-          price: "",
-          color: "",
-          quantity: "",
-          image: null,
-        });
-        setMessage(response.data.message);
+      const response = await axios.post("http://localhost:5000/product/addProduct", formData, {
+        headers: {
+          "Content-Type": "multipart/form-data",
+        },
+      });
+      if (response.data.message === "ok") {
+        setMessage("Successfully added product");
+        setErrMsg("");
+        // Reset form fields
+        setProductName("");
+        setPrice("");
+        setCount(0);
+        setColor("");
+        SetSize("");
+        setCategory("");
+        setMainImage(null);
+        setAdditionalImages([]);
+        setDescription("");
       }
-    } catch (error) {
-      setErrMsg("Fail Add");
+     
+    } catch(err) {
+      console.log(err.message);
     }
+    // try {
+    //   let response;
+    //   if (existProduct) {
+    //     response = await axios.put(
+    //       `/products/editProduct/${existProduct._id}`,
+    //       formData,
+    //       {
+    //         headers: {
+    //           "Content-Type": "multipart/form-data",
+    //         },
+    //       }
+    //     );
+    //     window.location.href = `${process.env.REACT_APP_DASH_URL}product`;
+    //     clearEditing();
+    //     console.log(response.data);
+    //   } else {
+    //     response = await axios.post("/products/addProduct", formData, {
+    //       headers: {
+    //         "Content-Type": "multipart/form-data",
+    //       },
+    //     });
+    //   }
+    //   if (response.data.message === "ok") {
+    //     setMessage("Successfully added product");
+    //     setErrMsg("");
+    //     // Reset form fields
+    //     setProductName("");
+    //     setPrice("");
+    //     setCount(0);
+    //     setColor("");
+    //     SetSize("");
+    //     setSelectedCategory("");
+    //     setSelectBrand("");
+    //     setMainImage(null);
+    //     setAdditionalImages([]);
+    //     setDescription("");
+    //     setWeight("");
+    //   }
+    // } catch (err) {
+    //   setErrMsg("Can't add product");
+    //   console.error(err.message);
+    //   setMessage("");
+    // }
   };
+
   const logout = async () => {
     try {
       const logOut = await axios.get("/user/logout");
@@ -112,108 +179,155 @@ function Product() {
       />
 
       {/* <!-- Sidebar --> */}
-      <div style={sidebar}>
-               
-              
-            </div>
-            <div className="container-fluid">
-  <div className="row">
-    {/* Sidebar */}
-    <div style={sidebar} className="col-lg-3 col-md-4">
-    <a style={sidebarA} href="#" className="active"><i className="fa-home fas"></i> Dashboard</a>
-                <Link to={'/product'}><a style={sidebarA} href="#"><i className="fa-box fas"></i> Add Products</a></Link>
-                <Link to={'/allproduct'}><a style={sidebarA} href="#"><i className="fa-box fas"></i> View Products</a></Link>
-                <Link to={'/allSales'}><a style={sidebarA} href="#"><i className="fa-box fas"></i>View Sales</a></Link>
-                <Link to={'/allDetails'}><a style={sidebarA} href="#"><i className="fa-users fas"></i>Users</a></Link>
-                <a  style={sidebarA} onClick={logout}><span style={{cursor:'pointer'}}>Logout</span></a>
-    </div>
-
-    {/* Main Content */}
-    <div style={content} className="col-lg-9 col-md-8">
-      <div className="container">
+      <div style={sidebar}></div>
+      <div className="container-fluid">
         <div className="row">
-          <div className="col-md-10">
-            <h1 className="h3 mb-4 text-gray-800">ADD Product</h1>
-            <form onSubmit={productAdd}>
-              <div className="row mb-3">
-                <div className="col-md-6">
-                  <label htmlFor="productName" className="form-label">Product Name</label>
-                  <input
-                    type="text"
-                    className="form-control"
-                    id="productName"
-                    name="productName"
-                    value={productData.productName}
-                    onChange={handleInputChange}
-                    placeholder="Product Name"
-                    required
-                  />
-                </div>
-                <div className="col-md-6">
-                  <label htmlFor="price" className="form-label">Price</label>
-                  <input
-                    type="number"
-                    className="form-control"
-                    id="price"
-                    name="price"
-                    value={productData.price}
-                    onChange={handleInputChange}
-                    placeholder="Price"
-                    required
-                  />
-                </div>
+          {/* Sidebar */}
+          <div style={sidebar} className="col-lg-3 col-md-4">
+            <a style={sidebarA} href="#" className="active">
+              <i className="fa-home fas"></i> Dashboard
+            </a>
+            <Link to={"/product"}>
+              <a style={sidebarA} href="#">
+                <i className="fa-box fas"></i> Add Products
+              </a>
+            </Link>
+            <Link to={"/allproduct"}>
+              <a style={sidebarA} href="#">
+                <i className="fa-box fas"></i> View Products
+              </a>
+            </Link>
+            <Link to={"/allSales"}>
+              <a style={sidebarA} href="#">
+                <i className="fa-box fas"></i>View Sales
+              </a>
+            </Link>
+            <Link to={"/allDetails"}>
+              <a style={sidebarA} href="#">
+                <i className="fa-users fas"></i>Users
+              </a>
+            </Link>
+            <a style={sidebarA} onClick={logout}>
+              <span style={{ cursor: "pointer" }}>Logout</span>
+            </a>
+          </div>
+
+          {/* Main Content */}
+          <div style={content} className="col-lg-9 col-md-8">
+            <div className="container">
+              <div className="form-container">
+              <form method="POST" onSubmit={addProduct}>
+        {message && <p className="alert alert-success">{message}</p>}
+        {errMsg && <p className="alert alert-danger">{errMsg}</p>}
+        <div className="form-group pb-3">
+          <label htmlFor="productName">Product Name</label>
+          <input
+            type="text"
+            className="form-control pt-2 mt-2"
+            id="productName"
+            aria-describedby="productNameHelp"
+            value={productName}
+            placeholder="Ex: Levis t-shirt"
+            onChange={(e) => setProductName(e.target.value)}
+          />
+        </div>
+        <div className="form-group pb-3">
+          <label htmlFor="size">Product Category</label>
+          <input
+            type="text"
+            className="form-control pt-2 mt-2"
+            id="size"
+            aria-describedby="sizeHelp"
+            value={Category}
+            placeholder="Ex: Sm, Lg"
+            onChange={(e) => setCategory(e.target.value)}
+          />
+        </div>
+        <div className="form-group pb-3">
+          <label htmlFor="price">Product Price</label>
+          <input
+            type="text"
+            className="form-control pt-2 mt-2"
+            id="price"
+            aria-describedby="priceHelp"
+            value={price}
+            placeholder="Ex: $100"
+            onChange={(e) => setPrice(e.target.value)}
+          />
+        </div>
+        <div className="form-group pb-3">
+          <label htmlFor="count">Product Count</label>
+          <input
+            type="text"
+            className="form-control pt-2 mt-2"
+            id="count"
+            aria-describedby="countHelp"
+            value={count}
+            placeholder="Ex: 5"
+            onChange={(e) => setCount(e.target.value)}
+          />
+        </div>
+        <div className="form-group pb-3">
+          <label htmlFor="description">Product Description</label>
+          <input
+            type="text"
+            className="form-control pt-2 mt-2"
+            id="description"
+            aria-describedby="descriptionHelp"
+            value={description}
+            onChange={(e) => setDescription(e.target.value)}
+          />
+        </div>
+        <div className="form-group pb-3">
+          <label htmlFor="color">Color</label>
+          <input
+            type="text"
+            className="form-control pt-2 mt-2"
+            id="color"
+            aria-describedby="colorHelp"
+            value={color}
+            placeholder="Ex: red"
+            onChange={(e) => setColor(e.target.value)}
+          />
+        </div>
+        <div className="form-group pb-3">
+          <label htmlFor="size">Product Size</label>
+          <input
+            type="text"
+            className="form-control pt-2 mt-2"
+            id="size"
+            aria-describedby="sizeHelp"
+            value={size}
+            placeholder="Ex: Sm, Lg"
+            onChange={(e) => SetSize(e.target.value)}
+          />
+        </div>
+        <div className="form-group pb-3">
+          <label className="">Main Image</label>
+          <input
+            type="file"
+            className="form-control"
+            onChange={handleMainImageChange}
+          />
+        </div>
+        <div className="form-group">
+          <label className="">Additional Images</label>
+          <input
+            type="file"
+            className="form-control"
+            multiple
+            onChange={handleAdditionalImagesChange}
+          />
+        </div>
+        <button type="submit" className="btn btn-primary btn-submit mt-3">
+          Submit
+        </button>
+      </form>
               </div>
-              <div className="row mb-3">
-                <div className="col-md-6">
-                  <label htmlFor="color" className="form-label">Color</label>
-                  <input
-                    type="text"
-                    className="form-control"
-                    id="color"
-                    name="color"
-                    value={productData.color}
-                    onChange={handleInputChange}
-                    placeholder="Color"
-                    required
-                  />
-                </div>
-                <div className="col-md-6">
-                  <label htmlFor="quantity" className="form-label">Quantity</label>
-                  <input
-                    type="text"
-                    className="form-control"
-                    id="quantity"
-                    name="quantity"
-                    value={productData.quantity}
-                    onChange={handleInputChange}
-                    placeholder="Quantity"
-                    required
-                  />
-                </div>
-              </div>
-              <div className="row mb-3">
-                <div className="col-md-6">
-                  <label htmlFor="image" className="form-label">Image</label>
-                  <input
-                    type="file"
-                    className="form-control"
-                    id="image"
-                    name="image"
-                    onChange={handleFileChange}
-                    required
-                  />
-                </div>
-              </div>
-              <button type="submit" className="btn btn-primary">Add Product</button>
-            </form>
-            {message && <p>{message}</p>}
-            {errMsg && <p>{errMsg}</p>}
+            </div>
           </div>
         </div>
       </div>
-    </div>
-  </div>
-</div>
 
       <script src="https://code.jquery.com/jquery-3.5.1.slim.min.js"></script>
       <script src="https://cdn.jsdelivr.net/npm/@popperjs/core@2.5.4/dist/umd/popper.min.js"></script>

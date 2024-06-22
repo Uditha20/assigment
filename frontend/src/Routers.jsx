@@ -15,6 +15,8 @@ import Payment from "./Pages/Payment";
 import ShowSales from "./Pages/ShowSales";
 import UserDetails from "./Pages/UserDetails";
 import EditProduct from "./Pages/EditProduct";
+import Account from "./Pages/Account";
+import ProductDetail from "./Pages/ProductDetail";
 
 
 
@@ -88,6 +90,15 @@ export const routes = [
         path:'/allDetails',
         element:<UserDetails/>
     },
+    {
+        path:'/account',
+        element:<Account/>
+    },
+    {
+        path:'/productDetails/:id',
+        element:<ProductDetail/>
+    },
+  
   
   
   

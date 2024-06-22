@@ -1,4 +1,6 @@
-
+ /* body {
+  padding-top: 200px; 
+}  */
   
   .cart-count {
     position: absolute;
@@ -93,4 +95,252 @@ h2 {
 
 .cart-item-details button:hover {
   background-color: #ff1a1a;
+}
+
+/* Add this to your CSS file */
+#header {
+  position: fixed;
+  top: 0;
+  width: 100%;
+  z-index: 1000;
+}
+
+#header-wrap {
+  width: 100%;
+  background: #fff; /* Adjust background color as needed */
+  box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1); /* Optional: Add a shadow for better visibility */
+}
+
+.padding-small.primary-nav {
+  padding-top: 10px;
+  padding-bottom: 10px;
+}
+
+.menu-list {
+  list-style: none;
+  padding: 0;
+  margin: 0;
+}
+
+.menu-item {
+  display: inline-block;
+  position: relative;
+}
+
+.menu-item .submenu {
+  display: none;
+  position: absolute;
+  top: 100%;
+  left: 0;
+  background: #fff; /* Adjust background color as needed */
+  box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1); /* Optional: Add a shadow for better visibility */
+}
+
+.menu-item:hover .submenu {
+  display: block;
+}
+
+/* Account.css */
+.order-card-back {
+  background-color: #f8f9fa;
+  padding: 20px;
+  border-radius: 8px;
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+}
+
+.order-card {
+  background-color: #ffffff;
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+  padding: 15px;
+  border-radius: 8px;
+  margin-bottom: 20px;
+  transition: background-color 0.3s;
+}
+
+.order-card:nth-child(odd) {
+  background-color: #ca60df;
+}
+
+.order-card:nth-child(even) {
+  background-color: #267ace;
+}
+
+.order-date {
+  font-size: 1.25rem;
+  color: #333;
+}
+
+.order-total {
+  font-weight: bold;
+  color: #444;
+}
+
+.card-title {
+  color: #555;
+}
+
+.card-text {
+  color: #666;
+}
+
+.card {
+  background-color: #ffffff;
+  border: 1px solid #dee2e6;
+}
+
+.card-body {
+  padding: 20px;
+}
+
+.card-body h5 {
+  margin-bottom: 10px;
+}
+
+.card-body p {
+  margin-bottom: 5px;
+}
+.form-container {
+  max-width: 600px;
+  margin: 0 auto;
+  padding: 20px;
+  border: 1px solid #ccc;
+  border-radius: 8px;
+  background-color: #f9f9f9;
+}
+
+.form-group label {
+  font-weight: bold;
+}
+
+.btn-submit {
+  width: 100%;
+  background-color: #007bff;
+  border: none;
+}
+
+.btn-submit:hover {
+  background-color: #0056b3;
+}
+
+.alert {
+  margin-bottom: 20px;
+}
+/* ProductDetail.css */
+
+.container {
+  padding: 20px;
+  max-width: 1200px;
+  margin: 0 auto;
+}
+
+.breadcrumb {
+  margin-bottom: 20px;
+}
+
+.breadcrumb h6 {
+  color: #555;
+}
+
+.product-details-container {
+  display: flex;
+  gap: 20px;
+  margin-bottom: 20px;
+}
+
+.additional-images {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+}
+
+.detail-product-small {
+  background-color: #f8f9fa;
+  padding: 10px;
+  border-radius: 8px;
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+}
+
+.additional-image {
+  width: 80%;
+  height: auto;
+  border-radius: 8px;
+}
+
+.main-image {
+  flex: 2;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.main-product-image {
+  max-width: 100%;
+  height: auto;
+  border-radius: 8px;
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+}
+
+.product-info {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+}
+
+.product-info h4 {
+  margin-bottom: 10px;
+  color: #333;
+}
+
+.product-info .status p {
+  color: #00ff66;
+  margin: 5px 0;
+}
+
+.product-info h5 {
+  color: #555;
+  margin: 5px 0;
+}
+
+.product-info .description {
+  color: #777;
+  text-align: justify;
+  margin: 10px 0;
+}
+
+.product-info .buy-now {
+  background-color: #ff5722;
+  color: #fff;
+  border: none;
+  padding: 10px 20px;
+  border-radius: 5px;
+  cursor: pointer;
+  transition: background-color 0.3s ease;
+}
+
+.product-info .buy-now:hover {
+  background-color: #e64a19;
+}
+
+.related-items {
+  margin-top: 40px;
+}
+
+.related-items h6 {
+  margin-bottom: 20px;
+  color: #333;
+}
+
+.related-item {
+  flex: 1;
+  margin-bottom: 20px;
+}
+
+.related-item .item {
+  height: 400px;
+  background-color: #f8f9fa;
+  padding: 20px;
+  border-radius: 8px;
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
 }

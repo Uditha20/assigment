@@ -1,34 +1,48 @@
 import mongoose from "mongoose";
 
-const Productschema = new mongoose.Schema({
-    productName:{
-        type:String,
-        required: [true, "name is required"],
-    },
-    price:{
-        type:Number,
-        required: [true, "number is required"],
-    },
-    color:{
-        type:String,
-        required:[true,"km is requird"]
-    },
-    quantity:{
-        type:String,
-        required:true
-    },
-  
-    isActive:{
-        type:Boolean,
-        required:true,
-        default:true
-    },
-
-    image:{
-        type:String
-    }
+const products = new mongoose.Schema({
+  productName: {
+    type: String,
     
-})
+  },
+  price: {
+    type: Number,
+  
+  },
+  item_count: {
+    type: Number,
+   
+  },
+  description: {
+    type: String,
+    
+  },
 
-const Product=mongoose.model("product",Productschema);
+  color: {
+    type: String,
+  },
+  size: {
+    type: String,
+    default: "normal"
+  },
+  isActive: {
+    type: Boolean,
+    default: true,
+  },
+  categoryName: {
+    type: String,
+    default: "ware",
+  },
+ 
+  mainImage: {
+    type: String, // URL or path to the main image
+  },
+  additionalImages: [{
+    type: String, // Array of URLs or paths to additional images
+  }],
+
+  //  need to add the image field
+});
+
+const Product = mongoose.model("product", products);
 export default Product;

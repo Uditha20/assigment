@@ -3,7 +3,7 @@ import React from 'react'
 function LandImageDiv(props) {
     return (
         <>
-            <section className="jarallax min-height300 padding-large site-banner"
+            <section className="jarallax min-height300 padding-large site-banner "
                 style={{
                     backgroundImage: `url(${props.img})`,
                     backgroundRepeat: 'no-repeat',

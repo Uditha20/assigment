@@ -62,13 +62,13 @@ function Shop() {
                           key={index}
                         >
                           <ProductItem
-                            img={product.image} // Use product.imageUrl if available
-                            imgAlt={product.productName}
-                            link="single-product.html"
-                            title={product.productName}
-                            price={product.price}
-                            _id={product._id}
-                          />
+                          pic={product.mainImage} // Use product.imageUrl if available
+                          imgAlt={product.productName}
+                          link="single-product.html"
+                          title={product.productName}
+                          price={product.price}
+                          _id={product._id}
+                        />
                         </div>
                       ))}
                     </div>

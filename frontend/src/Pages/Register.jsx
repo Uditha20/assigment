@@ -1,5 +1,6 @@
 import React, { useState } from "react";
 import axios from "axios";
+import { Link } from "react-router-dom";
 
 function Register() {
   const [password, setPassword] = useState("");
@@ -47,6 +48,8 @@ function Register() {
   const body = {
     backgroundColor: "#f8f9fa",
     height: "100vh",
+    paddingTop:"200px"
+   
   };
 
   const container = {
@@ -76,6 +79,161 @@ function Register() {
 
   return (
     <>
+    <header id="header" className="fixed-top">
+        <div id="header-wrap">
+          <nav className="padding-small primary-nav">
+            <div className="container">
+              <div className="d-flex align-items-center row">
+                <div className="col-lg-2 col-md-2">
+                  <div className="main-logo">
+                    <Link to="/">
+                      <img
+                        src="../../src/assets/images/main-logo.png"
+                        alt="logo"
+                      />
+                    </Link>
+                  </div>
+                </div>
+                <div className="col-lg-10 col-md-10">
+                  <div className="navbar">
+                    <div
+                      id="main-nav"
+                      className="right d-flex justify-content-end stellarnav"
+                    >
+                      <ul className="menu-list">
+                        <li className="has-sub menu-item">
+                          <Link
+                            to={"/Home"}
+                            className="d-flex align-items-center item-anchor"
+                            data-effect="Home"
+                          >
+                            Home
+                          </Link>
+                        </li>
+
+                        <li>
+                          <Link
+                            to={"/AboutUs"}
+                            className="item-anchor"
+                            data-effect="About"
+                          >
+                            About
+                          </Link>
+                        </li>
+
+                        <li className="has-sub menu-item">
+                          <Link
+                            to={"/Shop"}
+                            className="d-flex align-items-center item-anchor"
+                            data-effect="Shop"
+                          >
+                            Shop
+                          </Link>
+                          <ul className="submenu">
+                            <li>
+                              <Link to="/shop" className="item-anchor">
+                                Shop
+                              </Link>
+                            </li>
+                            <li>
+                              <Link to="/shop-slider" className="item-anchor">
+                                Shop slider
+                                <span className="text-primary"> (PRO)</span>
+                              </Link>
+                            </li>
+                            <li>
+                              <Link to="/shop-grid" className="item-anchor">
+                                Shop grid
+                                <span className="text-primary"> (PRO)</span>
+                              </Link>
+                            </li>
+                            <li>
+                              <Link to="/shop-list" className="item-anchor">
+                                Shop list
+                                <span className="text-primary"> (PRO)</span>
+                              </Link>
+                            </li>
+                            <li>
+                              <Link
+                                to="/single-product"
+                                className="item-anchor"
+                              >
+                                Single product
+                                <span className="text-primary"> (PRO)</span>
+                              </Link>
+                            </li>
+                            <li>
+                              <Link to="/cart" className="item-anchor">
+                                Cart<span className="text-primary"> (PRO)</span>
+                              </Link>
+                            </li>
+                            <li>
+                              <Link to="/wishlist" className="item-anchor">
+                                Wishlist
+                                <span className="text-primary"> (PRO)</span>
+                              </Link>
+                            </li>
+                            <li>
+                              <Link to="/checkout" className="item-anchor">
+                                Checkout
+                                <span className="text-primary"> (PRO)</span>
+                              </Link>
+                            </li>
+                          </ul>
+                        </li>
+
+                        <li className="has-sub menu-item">
+                          <Link
+                            to={"/Blog"}
+                            className="d-flex align-items-center item-anchor"
+                            data-effect="Blog"
+                          >
+                            Blog
+                          </Link>
+                          <ul className="submenu">
+                            <li>
+                              <Link to="/blog" className="item-anchor">
+                                Blog
+                              </Link>
+                            </li>
+                            <li>
+                              <Link to="/blog-sidebar" className="item-anchor">
+                                Blog with sidebar
+                                <span className="text-primary"> (PRO)</span>
+                              </Link>
+                            </li>
+                            <li>
+                              <Link to="/blog-masonry" className="item-anchor">
+                                Blog masonry
+                                <span className="text-primary"> (PRO)</span>
+                              </Link>
+                            </li>
+                            <li>
+                              <Link to="/single-post" className="item-anchor">
+                                Single post
+                              </Link>
+                            </li>
+                          </ul>
+                        </li>
+
+                        <li>
+                          <Link
+                            to={"/ContactUs"}
+                            className="item-anchor"
+                            data-effect="Contact"
+                          >
+                            Contact
+                          </Link>
+                        </li>
+                      </ul>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </nav>
+        </div>
+      </header>
       <link
         rel="stylesheet"
         href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css"

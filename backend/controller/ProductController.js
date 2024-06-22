@@ -2,30 +2,28 @@ import asyncErrorHandler from "../utils/asyncErrorHandler.js";
 import { CustomError } from "../utils/customerError.js";
 import prodcut from "../model/productModel.js";
 const addProduct = asyncErrorHandler(async (req, res, next) => {
-  try {
-    const { productName, price, color, quantity } = req.body;
-    let imagePath = "";
-    if (req.file) {
-      imagePath = req.file.path;
-    }
+  const { productName, price, item_count,description,color, size, categoryName} =
+    req.body;
 
-    const newprodcut = new prodcut({
-      productName,
-      price,
-      color,
-      quantity,
-      image: imagePath, // Assuming your model has an 'image' field
-    });
+  const mainImage = req.files["mainImage"]
+    ? req.files["mainImage"][0].path
+    : null;
+  const additionalImages = req.files["additionalImages"]
+    ? req.files["additionalImages"].map((file) => file.path)
+    : [];
+  const productAdd = await prodcut.create({
+    productName,
+    price,
+    item_count,
+    color,
+    size,
+    description,
+    categoryName,
+    mainImage, // Adding the main image URL
+    additionalImages, // Adding the additional image URLs
+  });
 
-    await newprodcut.save();
-
-    return res
-      .status(201)
-      .json({ message: "Add product Successfull", newprodcut });
-  } catch (err) {
-    const error = new CustomError(err, 404);
-    return next(error);
-  }
+  return res.status(201).json({ message: "ok", productAdd });
 });
 
 // all product

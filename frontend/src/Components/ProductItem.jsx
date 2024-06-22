@@ -1,20 +1,18 @@
 import React, { useContext } from "react";
-import { Link } from 'react-router-dom';
+import { Link } from "react-router-dom";
 import { CartContext } from "../context/CartContext";
 
-const BASE_URL = 'http://localhost:5000/';
+const BASE_URL = "http://localhost:5000/";
 
-function ProductItem({ img, imgAlt, link, title, price, _id, weight }) {
+function ProductItem({ pic, imgAlt, link, title, price, _id }) {
   const { cart, addToCart } = useContext(CartContext);
-
-  const formattedImgUrl = `${BASE_URL}${img.replace(/\\/g, '/')}`;
 
   const addToCartHandler = () => {
     const item = {
       _id,
       productName: title,
       price,
-      img: formattedImgUrl,
+      img: imagePath,
       quantity: 1, // Default initial quantity
       subtotal: price, // Initial subtotal
     };
@@ -22,11 +20,12 @@ function ProductItem({ img, imgAlt, link, title, price, _id, weight }) {
   };
 
   console.log(cart); // To verify the cart content
-
+  const adjustedPic = pic.replace(/\\/g, '/');
+  const imagePath = `${BASE_URL}${adjustedPic}`;
   return (
     <>
       <div className="image-holder">
-        <img src={formattedImgUrl} alt={imgAlt} className="product-image" />
+        <img src={imagePath} className="product-image" />
       </div>
       <div className="cart-concern">
         <div className="d-flex justify-content-between align-items-center cart-button">
@@ -38,7 +37,7 @@ function ProductItem({ img, imgAlt, link, title, price, _id, weight }) {
             add to cart <i className="icon-arrow-io icon"></i>
           </button>
           <button type="button" className="d-flex view-btn tooltip">
-            <i className="icon icon-screen-full"></i>
+          <Link className="icon-heart" to={`/productDetails/${_id}`}> <i className="icon icon-screen-full"></i></Link>
             <span className="tooltip-text">Quick view</span>
           </button>
           <button type="button" className="wishlist-btn">

@@ -37,7 +37,7 @@ function Home() {
     <>
       <Header />
 
-      <section id="billboard" className="overflow-hidden">
+      <section id="billboard" className="overflow-hidden mt-5" >
         <button className="button-prev">
           <i className="icon-chevron-left icon"></i>
         </button>
@@ -136,7 +136,7 @@ function Home() {
                         key={index}
                       >
                         <ProductItem
-                          img={product.image} // Use product.imageUrl if available
+                          pic={product.mainImage} // Use product.imageUrl if available
                           imgAlt={product.productName}
                           link="single-product.html"
                           title={product.productName}
@@ -292,7 +292,7 @@ function Home() {
                           key={index}
                         >
                           <ProductItem
-                            img={product.image} // Use product.imageUrl if available
+                             pic={product.mainImage} // Use product.imageUrl if available
                             imgAlt={product.productName}
                             link="single-product.html"
                             title={product.productName}
