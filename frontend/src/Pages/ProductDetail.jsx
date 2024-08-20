@@ -6,6 +6,9 @@ import Footer from "../Components/Footer";
 import ProductItem from "../Components/ProductItem";
 import { CartContext } from "../context/CartContext";
 const ProductDetail = () => {
+  useEffect(() => {
+    window.scrollTo(0, 0);
+  }, []);
   const { id } = useParams();
   const [productDetails, setProductDetails] = useState({});
   const [categories, setCategories] = useState([]);
@@ -61,7 +64,7 @@ const ProductDetail = () => {
   return (
     <>
    <Header/>
-    <div className="container">
+    <div className="container" style={{marginTop:"200px"}}>
       <div className="breadcrumb">
         <h6>{productDetails.productName}</h6>
       </div>
@@ -116,7 +119,7 @@ const ProductDetail = () => {
         </div>
       </div>
 
-      <div className="related-items">
+      {/* <div className="related-items">
         <h6>Related Items</h6>
         <div className="tab-content">
                 <div id="all" data-tab-content className="active">
@@ -139,7 +142,7 @@ const ProductDetail = () => {
                   </div>
                 </div>
               </div>
-      </div>
+      </div> */}
     </div>
     <Footer />
 

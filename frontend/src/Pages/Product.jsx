@@ -27,7 +27,8 @@ function Product({ existProduct, clearEditing }) {
   const [color, setColor] = useState(initialColor);
   const [size, SetSize] = useState(initialSize);
   const [description, setDescription] = useState(initialDescription);
-  
+  const [error, setError] = useState('');
+  const [countError, setCountError] = useState('');
   const [Category, setCategory] = useState(
     initialCategory
   );
@@ -43,7 +44,30 @@ function Product({ existProduct, clearEditing }) {
   const handleAdditionalImagesChange = (event) => {
     setAdditionalImages([...event.target.files]);
   };
+  const handlePriceChange = (e) => {
+    const value = e.target.value;
+   
+    const isValid = /^\d*\.?\d*$/.test(value);
 
+    if (isValid) {
+      setPrice(value);
+      setError('');
+    } else {
+      setError('Please enter a numeric value');
+    }
+  };
+
+  const handleCountChange = (e) => {
+    const value = e.target.value;
+    const isValid = /^\d*$/.test(value);
+
+    if (isValid) {
+      setCount(value);
+      setCountError('');
+    } else {
+      setCountError('Please enter a numeric value');
+    }
+  };
   const addProduct = async (e) => {
     e.preventDefault();
     const formData = new FormData();
@@ -183,34 +207,36 @@ function Product({ existProduct, clearEditing }) {
       <div className="container-fluid">
         <div className="row">
           {/* Sidebar */}
-          <div style={sidebar} className="col-lg-3 col-md-4">
-            <a style={sidebarA} href="#" className="active">
-              <i className="fa-home fas"></i> Dashboard
-            </a>
-            <Link to={"/product"}>
-              <a style={sidebarA} href="#">
-                <i className="fa-box fas"></i> Add Products
-              </a>
-            </Link>
-            <Link to={"/allproduct"}>
-              <a style={sidebarA} href="#">
-                <i className="fa-box fas"></i> View Products
-              </a>
-            </Link>
-            <Link to={"/allSales"}>
-              <a style={sidebarA} href="#">
-                <i className="fa-box fas"></i>View Sales
-              </a>
-            </Link>
-            <Link to={"/allDetails"}>
-              <a style={sidebarA} href="#">
-                <i className="fa-users fas"></i>Users
-              </a>
-            </Link>
-            <a style={sidebarA} onClick={logout}>
-              <span style={{ cursor: "pointer" }}>Logout</span>
-            </a>
-          </div>
+          <div style={sidebar}>
+        <a style={sidebarA} href="#" className="active">
+          <i className="fa-tachometer-alt fas"></i> Dashboard
+        </a>
+        <Link to={"/product"}>
+          <a style={sidebarA} href="#">
+            <i className="fa-plus-square fas"></i> Add Products
+          </a>
+        </Link>
+        <Link to={"/allproduct"}>
+          <a style={sidebarA} href="#">
+            <i className="fa-eye fas"></i> View Products
+          </a>
+        </Link>
+        <Link to={"/allSales"}>
+          <a style={sidebarA} href="#">
+            <i className="fa-chart-line fas"></i> View Sales
+          </a>
+        </Link>
+        <Link to={"/allDetails"}>
+          <a style={sidebarA} href="#">
+            <i className="fa-user-friends fas"></i> Users
+          </a>
+        </Link>
+        <a style={sidebarA} onClick={logout}>
+          <span style={{ cursor: "pointer" }}>
+            <i className="fa-sign-out-alt fas"></i> Logout
+          </span>
+        </a>
+      </div>
 
           {/* Main Content */}
           <div style={content} className="col-lg-9 col-md-8">
@@ -232,17 +258,24 @@ function Product({ existProduct, clearEditing }) {
           />
         </div>
         <div className="form-group pb-3">
-          <label htmlFor="size">Product Category</label>
-          <input
-            type="text"
-            className="form-control pt-2 mt-2"
-            id="size"
-            aria-describedby="sizeHelp"
-            value={Category}
-            placeholder="Ex: Sm, Lg"
-            onChange={(e) => setCategory(e.target.value)}
-          />
-        </div>
+  <label htmlFor="category">Product Category</label>
+  <select
+    className="form-control pt-2 mt-2"
+    id="category"
+    value={Category}
+    onChange={(e) => setCategory(e.target.value)}
+  >
+    <option value="" disabled>Select a category</option>
+    <option value="Shoes">Shoes</option>
+    <option value="Tshirts">T-shirts</option>
+    <option value="Pants">Pants</option>
+    <option value="Hoodie">Hoodie</option>
+    <option value="Outer">Outer</option>
+    <option value="Jackets">Jackets</option>
+    <option value="Accessories">Accessories</option>
+  </select>
+</div>
+
         <div className="form-group pb-3">
           <label htmlFor="price">Product Price</label>
           <input
@@ -252,8 +285,9 @@ function Product({ existProduct, clearEditing }) {
             aria-describedby="priceHelp"
             value={price}
             placeholder="Ex: $100"
-            onChange={(e) => setPrice(e.target.value)}
+            onChange={handlePriceChange}
           />
+          {error && <small className="text-danger">{error}</small>}
         </div>
         <div className="form-group pb-3">
           <label htmlFor="count">Product Count</label>
@@ -264,8 +298,9 @@ function Product({ existProduct, clearEditing }) {
             aria-describedby="countHelp"
             value={count}
             placeholder="Ex: 5"
-            onChange={(e) => setCount(e.target.value)}
+            onChange={handleCountChange}
           />
+           {countError && <small className="text-danger">{countError}</small>}
         </div>
         <div className="form-group pb-3">
           <label htmlFor="description">Product Description</label>

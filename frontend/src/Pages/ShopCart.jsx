@@ -1,10 +1,13 @@
-import React, { useContext } from 'react';
+import React, { useContext, useEffect } from 'react';
 import Header from '../Components/Header';
 import Footer from '../Components/Footer';
 import { CartContext } from '../context/CartContext';
 import { useNavigate } from 'react-router-dom';
 
 function ShopCart() {
+  useEffect(() => {
+    window.scrollTo(0, 0);
+  }, []);
     const { cart, updateQuantity, removeFromCart, total } = useContext(CartContext);
     const navigate = useNavigate();
     const handleQuantityChange = (item, increment) => {

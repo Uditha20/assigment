@@ -45,7 +45,7 @@ function AboutUs() {
         </div>
       </section>
 
-      <section id="about-us">
+      <section id="about-us" >
         <div className="container">
           <div className="d-flex align-items-center row">
             <div className="col-lg-6 col-md-12">

@@ -37,7 +37,7 @@ function Home() {
     <>
       <Header />
 
-      <section id="billboard" className="overflow-hidden mt-5" >
+      <section id="billboard" className="overflow-hidden mt-5" style={{ paddingTop: "200px" }}>
         <button className="button-prev">
           <i className="icon-chevron-left icon"></i>
         </button>
@@ -55,7 +55,7 @@ function Home() {
                 backgroundPosition: "center",
               }}
             >
-              <div className="banner-content">
+              <div className="banner-content" >
                 <div className="container">
                   <div className="row">
                     <div className="col-md-6">
@@ -120,12 +120,7 @@ function Home() {
             <div className="container">
               <div className="d-flex flex-wrap justify-content-between align-items-center section-header">
                 <h2 className="section-title">Featured Products</h2>
-                <div className="align-right btn-wrap">
-                  <a href="blog.html" className="d-flex align-items-center">
-                    View All Products{" "}
-                    <i className="icon-arrow-io icon icon"></i>
-                  </a>
-                </div>
+                
               </div>
               <div className="tab-content">
                 <div id="all" data-tab-content className="active">
@@ -292,7 +287,7 @@ function Home() {
                           key={index}
                         >
                           <ProductItem
-                             pic={product.mainImage} // Use product.imageUrl if available
+                            pic={product.mainImage} // Use product.imageUrl if available
                             imgAlt={product.productName}
                             link="single-product.html"
                             title={product.productName}

@@ -17,7 +17,7 @@ import UserDetails from "./Pages/UserDetails";
 import EditProduct from "./Pages/EditProduct";
 import Account from "./Pages/Account";
 import ProductDetail from "./Pages/ProductDetail";
-
+import ProtectRouter from "./context/ProtectRoter";
 
 
 export const routes = [
@@ -80,7 +80,7 @@ export const routes = [
     },
     {
         path:'/payment',
-        element:<Payment/>
+        element: <ProtectRouter><Payment/></ProtectRouter>
     },
     {
         path:'/allSales',

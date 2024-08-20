@@ -6,7 +6,7 @@ import { useUser } from "../context/UserContext";
 function Header() {
   const { totalItems } = useContext(CartContext);
   const { user } = useUser();
-
+ 
   return (
     <>
       <header id="header" className="fixed-top">
@@ -30,7 +30,16 @@ function Header() {
                     <li>
                       <Link to={"/Register"}>Sign Up</Link>
                     </li>
-                    <li>{user && <i className="icon icon-user" style={{cursor:'pointer'}}></i>}</li>
+                    <li>
+                      <Link to={"/account"}>
+                        {user && (
+                          <i
+                            className="icon icon-user"
+                            style={{ cursor: "pointer" }}
+                          ></i>
+                        )}
+                      </Link>
+                    </li>
                     <li>
                       <Link to={"/cart"}>
                         <i className="icon icon-shopping-cart"></i>
@@ -39,6 +48,7 @@ function Header() {
                         )}
                       </Link>
                     </li>
+                 
                   </ul>
                 </div>
               </div>
@@ -92,7 +102,6 @@ function Header() {
                           >
                             Shop
                           </Link>
-                    
                         </li>
 
                         <li className="has-sub menu-item">
@@ -103,7 +112,6 @@ function Header() {
                           >
                             Blog
                           </Link>
-                        
                         </li>
 
                         <li>

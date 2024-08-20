@@ -3,15 +3,16 @@ import asyncErrorHandler from "../utils/asyncErrorHandler.js";
 import { CustomError } from "../utils/customerError.js";
 import Stripe from "stripe";
 
-
 const addOrder = asyncErrorHandler(async (req, res, next) => {
   const { user, items, total, billDetails } = req.body;
   const addOrder = await Payment.create({ user, items, total, billDetails });
-  return res.status(201).json({ message: 'Order placed successfully.' });
+  return res.status(201).json({ message: "Order placed successfully." });
 });
 
 const paymentSession = asyncErrorHandler(async (req, res, next) => {
-  const stripe = Stripe('sk_test_51Oy64VSC015njDoty9VB7RHV9kQX1ivR8NibjYkBt5Mi3FczWOUF5eBhdXUJhVa0Y5EvFD4lpbu4M9JdNAXuJwu000fap5wtAB');
+  const stripe = Stripe(
+    process.env.STRIPE
+  );
   const { total } = req.body;
   const totalAmountInCents = parseInt(parseFloat(total) * 100);
   const lineItems = [
@@ -31,14 +32,12 @@ const paymentSession = asyncErrorHandler(async (req, res, next) => {
     payment_method_types: ["card"],
     line_items: lineItems,
     mode: "payment",
-    success_url:'http://localhost:5173/',
-    cancel_url: 'http://localhost:5173/Login',
+    success_url: "http://localhost:5173/",
+    cancel_url: "http://localhost:5173/Login",
   });
 
   res.json({ id: session.id });
 });
-
-
 
 const getOrdersByUser = asyncErrorHandler(async (req, res, next) => {
   const userId = req.params.userId; // Assuming you're getting the user ID from the route parameters
@@ -55,4 +54,4 @@ const getOrdersByUser = asyncErrorHandler(async (req, res, next) => {
 
   res.json(userOrders);
 });
-export { addOrder, getOrdersByUser,paymentSession};
+export { addOrder, getOrdersByUser, paymentSession };

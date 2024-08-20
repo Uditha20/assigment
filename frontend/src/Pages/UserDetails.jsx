@@ -118,14 +118,37 @@ function UserDetails() {
 
       {/* <!-- Sidebar --> */}
       <div style={sidebar}>
-                <a style={sidebarA} href="#" className="active"><i className="fa-home fas"></i> Dashboard</a>
-                <Link to={'/product'}><a style={sidebarA} href="#"><i className="fa-box fas"></i> Add Products</a></Link>
-                <Link to={'/allproduct'}><a style={sidebarA} href="#"><i className="fa-box fas"></i> View Products</a></Link>
-                <Link to={'/allSales'}><a style={sidebarA} href="#"><i className="fa-box fas"></i>View Sales</a></Link>
-                <Link to={'/allDetails'}><a style={sidebarA} href="#"><i className="fa-users fas"></i>Users</a></Link>
-                <a  style={sidebarA} onClick={logout}><span style={{cursor:'pointer'}}>Logout</span></a>
-              
-            </div>
+      <Link to={'/AdminDashboard'}>
+        <a style={sidebarA} href="#" className="active">
+          <i className="fa-tachometer-alt fas"></i> Dashboard
+        </a>
+        </Link>
+        <Link to={"/product"}>
+          <a style={sidebarA} href="#">
+            <i className="fa-plus-square fas"></i> Add Products
+          </a>
+        </Link>
+        <Link to={"/allproduct"}>
+          <a style={sidebarA} href="#">
+            <i className="fa-eye fas"></i> View Products
+          </a>
+        </Link>
+        <Link to={"/allSales"}>
+          <a style={sidebarA} href="#">
+            <i className="fa-chart-line fas"></i> View Sales
+          </a>
+        </Link>
+        <Link to={"/allDetails"}>
+          <a style={sidebarA} href="#">
+            <i className="fa-user-friends fas"></i> Users
+          </a>
+        </Link>
+        <a style={sidebarA} onClick={logout}>
+          <span style={{ cursor: "pointer" }}>
+            <i className="fa-sign-out-alt fas"></i> Logout
+          </span>
+        </a>
+      </div>
       <div style={content}>
       <table className="table">
         <thead>

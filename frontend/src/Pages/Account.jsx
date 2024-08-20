@@ -79,7 +79,7 @@ const Account = () => {
                 Order Date: {new Date(order.createdAt).toLocaleDateString()}
               </h3>
             </div>
-            <p className="order-total">Total: Rs {order.total}</p>
+            <p className="order-total">Total: $ {order.total}</p>
             <div className="row">
               {order.items.map((item) => (
                 <div key={item._id} className="col-12 mb-3">

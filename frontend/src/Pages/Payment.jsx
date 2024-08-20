@@ -9,6 +9,9 @@ import { useNavigate } from "react-router-dom";
 import Header from "../Components/Header";
 import { loadStripe } from "@stripe/stripe-js";
 function Payment() {
+  useEffect(() => {
+    window.scrollTo(0, 0);
+  }, []);
   const [message, setMessage] = useState("");
   const [errMsg, setErrMsg] = useState("");
   const [name, setName] = useState("");
@@ -40,35 +43,52 @@ function Payment() {
 
     setCardNumber(formattedInput);
   };
-  function generateReceipt(payment) {
+
+  const generateReceipt = (orderData) => {
     const doc = new jsPDF();
 
-    doc.text("Receipt", 10, 10);
-    doc.text(`Payment ID: ${payment._id}`, 10, 150);
-    doc.text(`Name: ${payment.name}`, 10, 20);
-    doc.text(`Address: ${payment.address}`, 10, 30);
-    doc.text(`Apartment: ${payment.apartment}`, 10, 40);
-    doc.text(`Town: ${payment.town}`, 10, 50);
-    doc.text(`Phone No: ${payment.phoneNo}`, 10, 60);
-    doc.text(`Email: ${payment.email}`, 10, 70);
-    doc.text(`Card Number: ${payment.cardNumber}`, 10, 80);
-    doc.text(`Expiry Month: ${payment.expiryMonth}`, 10, 90);
-    doc.text(`Expiry Year: ${payment.expiryYear}`, 10, 100);
-    doc.text(`CVV: ${payment.cvv}`, 10, 110);
-    doc.text(`Total: ${payment.total}`, 10, 120);
+    // Add shop name
+    doc.setFontSize(22);
+    doc.setTextColor(40, 116, 240); // Set color to a shade of blue
+    doc.text("Ultras Shop", 20, 20);
+
+    // Add Receipt title
+    doc.setFontSize(20);
+    doc.setTextColor(0, 0, 0); // Set color to black
+    doc.text("Receipt", 20, 30);
+
+    // Add billing details
+    doc.setFontSize(12);
+    doc.text(`Name: ${orderData.billDetails[0].name}`, 20, 50);
     doc.text(
-      `Created At: ${new Date(payment.createdAt).toLocaleString()}`,
-      10,
-      130
+      `Address: ${orderData.billDetails[0].address}, ${orderData.billDetails[0].apartment}, ${orderData.billDetails[0].town}`,
+      20,
+      60
     );
+    doc.text(`Phone: ${orderData.billDetails[0].phoneNo}`, 20, 70);
+    doc.text(`Email: ${orderData.billDetails[0].email}`, 20, 80);
+
+    // Add items
+    doc.text("Items:", 20, 90);
+    orderData.items.forEach((item, index) => {
+      const y = 100 + index * 10;
+      doc.text(`${item.productName}`, 20, y);
+      doc.text(`Quantity: ${item.quantity}`, 120, y, { align: "right" });
+      doc.text(`Subtotal: ${item.subtotal}`, 180, y, { align: "right" });
+    });
+
+    // Add total
+    doc.setFontSize(14);
+    doc.setFont("bold");
     doc.text(
-      `Updated At: ${new Date(payment.updatedAt).toLocaleString()}`,
-      10,
-      140
+      `Total: ${orderData.total}`,
+      20,
+      100 + orderData.items.length * 10
     );
 
-    return doc;
-  }
+    // Save the PDF
+    doc.save("receipt.pdf");
+  };
 
   const handleSubmit = async (e) => {
     e.preventDefault();
@@ -88,10 +108,14 @@ function Payment() {
         product: item._id, // Assuming 'id' is the product ID
         quantity: item.quantity,
         subtotal: item.subtotal,
+        productName:item.productName
       })),
       billDetails,
       total,
     };
+
+    console.log(orderData); // Ensure orderData is correct
+
     const confirmResult = await Swal.fire({
       title: "Confirm Payment",
       text: "Are you sure you want to proceed with the payment?",
@@ -100,6 +124,7 @@ function Payment() {
       confirmButtonText: "Yes, proceed",
       cancelButtonText: "No, cancel",
     });
+
     if (confirmResult.isConfirmed) {
       try {
         const response = await axios.post(
@@ -109,23 +134,24 @@ function Payment() {
 
         if (response.data && response.data.message) {
           const stripe = await loadStripe(
-            "pk_test_51Oy64VSC015njDot40bpYm2BS5VjpwPJb0WWw1G9Pa1dDRqK5ujoZgHal0vgITI2LWKOC4kLPuyXiIRJOeshzxkT00ZG1XgdQL"
+            "pk_test_51PplaGP7jUWx2W2SXdWpYdK72glTn9Biu2OE8ybctFwDoAKN5D804HkF5XeMQNsQ8fAHg1cDhPjTQ6nvnEKaeR3800xINiusCn"
           );
 
-          const response = await axios.post(
+          const paymentResponse = await axios.post(
             "http://localhost:5000/sales/payment",
             {
               total: orderData.total,
             }
           );
 
-          const session = response.data;
+          const session = paymentResponse.data;
 
           stripe.redirectToCheckout({
             sessionId: session.id,
           });
 
           localStorage.removeItem("cart");
+          generateReceipt(orderData); // Ensure this is called correctly
         } else {
           Swal.fire({
             title: "Error",
@@ -134,8 +160,6 @@ function Payment() {
             confirmButtonText: "OK",
           });
         }
-
-        // Handle the response as needed
       } catch (error) {
         if (error.response && error.response.data) {
           // Server-sent error message
@@ -147,11 +171,10 @@ function Payment() {
       }
     }
   };
-
   return (
     <>
       <Header />
-      <div className="container">
+      <div className="container" style={{ paddingTop: "250px" }}>
         <div className=" row d-flex pt-5 ">
           <div className=" d-flex justify-content-between  ">
             <div className="d-flex">
